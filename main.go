@@ -74,6 +74,7 @@ func main() {
 	}()
 
 	style := interactive.GetDefaultSytleAttr()
+	style.Foreground = interactive.ColorRed
 
 	for {
 		select {
@@ -86,10 +87,13 @@ func main() {
 				surBs := tools.DoPackWith4BytesHeader(sur.MustMarshalToBytes())
 				conn.Write(surBs)
 				waitingGameover = true
+				conn.Close()
+				win.Stop()
+				fmt.Println("你认输了")
+				return
 			case tools.CommandTypeEmpty:
 				// do nothing
 			case tools.CommandTypeUnkonwn:
-				style.Foreground = interactive.ColorRed
 				win.SendLineBackWithColor(style, "未知的命令")
 				win.SetBlockInput(false)
 			case tools.CommandTypeSwitch:
@@ -113,9 +117,8 @@ func main() {
 					continue
 				}
 
-				waitingUpgradeOKResp = true
 				upgradePacket := packets.PacketClientSendPawnUpgrade{
-					ChessPieceType: chess.ChessPieceType(pattern.Type),
+					ChessPieceType: pattern.Swi,
 				}
 				upgradePacketBytesWithHeader := tools.DoPackWith4BytesHeader(upgradePacket.MustMarshalToBytes())
 				_, err := conn.Write(upgradePacketBytesWithHeader)
@@ -327,6 +330,9 @@ func main() {
 				if packet.MoveRespType == packets.PacketTypeServerMoveRespTypeOK {
 					myTrun = false
 					msg := "现在是对方的回合"
+					if packet.KingThreat {
+						msg += ", 正在将军"
+					}
 					waitingMoveResp = false
 					tools.Draw(win, packet.TableOnOK, &msg)
 					win.SetBlockInput(false)
@@ -336,6 +342,8 @@ func main() {
 					myTrun = false
 					waitingUpgrade = true
 					win.SetBlockInput(false)
+					msg := "你可以升级, swi bishop/queen/rook/knight"
+					tools.Draw(win, packet.TableOnOK, &msg)
 					continue
 				}
 			case *packets.PacketServerNotifyRemoteMove:
@@ -355,7 +363,18 @@ func main() {
 					continue
 				}
 
+				if packet.RemotePawnUpgrade {
+					msg := "请等待对方升级"
+					myTrun = false
+					waitingRemoteUpgradeOK = true
+					tools.Draw(win, packet.Table, &msg)
+					continue
+				}
+
 				msg := "现在是你的回合"
+				if packet.KingThreat {
+					msg += ", 将军!"
+				}
 				myTrun = true
 				tools.Draw(win, packet.Table, &msg)
 			case *packets.PacketServerRemoteLoseConnection:
