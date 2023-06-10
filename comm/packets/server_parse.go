@@ -30,11 +30,11 @@ func ServerParse(bs []byte) interface{} {
 		json.Unmarshal(bs, &p)
 		return &p
 	case PacketTypeClientWheatherAcceptDraw:
-		p := PacketClientSendPawnUpgrade{}
+		p := PacketClientWheatherAcceptDraw{}
 		json.Unmarshal(bs, &p)
 		return &p
 	case PacketTypeClientDoSurrender:
-		p := PacketClientSendPawnUpgrade{}
+		p := PacketClientDoSurrender{}
 		json.Unmarshal(bs, &p)
 		return &p
 	default:

@@ -52,6 +52,8 @@ func main() {
 
 	var waitingAcceptDraw bool
 
+	var waitingGameover bool
+
 	var win *interactive.Win
 
 	errChan := make(chan error, 1)
@@ -79,6 +81,11 @@ func main() {
 		case cmd := <-cmdChan:
 			pattern := tools.ParseCommand(cmd)
 			switch pattern.Type {
+			case tools.CommandTypeSurrender:
+				sur := packets.PacketClientDoSurrender{}
+				surBs := tools.DoPackWith4BytesHeader(sur.MustMarshalToBytes())
+				conn.Write(surBs)
+				waitingGameover = true
 			case tools.CommandTypeEmpty:
 				// do nothing
 			case tools.CommandTypeUnkonwn:
@@ -86,6 +93,9 @@ func main() {
 				win.SendLineBackWithColor(style, "未知的命令")
 				win.SetBlockInput(false)
 			case tools.CommandTypeSwitch:
+				if waitingGameover {
+					continue
+				}
 				if waitingAcceptDraw {
 					win.SendLineBackWithColor(style, "正在等待你的响应, 你是否同意和棋?")
 					win.SetBlockInput(false)
@@ -117,6 +127,9 @@ func main() {
 				waitingUpgrade = false
 				waitingUpgradeOKResp = true
 			case tools.CommandTypeAccept, tools.CommandTypeRefuse:
+				if waitingGameover {
+					continue
+				}
 				if waitingRemoteUpgradeOK {
 					win.SendLineBackWithColor(style, "正在等待对方升级兵")
 					win.SetBlockInput(false)
@@ -150,6 +163,9 @@ func main() {
 					myTrun = true
 				}
 			case tools.CommandTypeMove, tools.CommandTypeMoveAndDraw:
+				if waitingGameover {
+					continue
+				}
 				if waitingAcceptDraw {
 					win.SendLineBackWithColor(style, "正在等待你的响应, 你是否同意和棋?")
 					win.SetBlockInput(false)
@@ -237,6 +253,12 @@ func main() {
 				}
 				if packet.WinnerSide == chess.SideBlack {
 					msg += ", 黑方胜利"
+				}
+				if packet.IsSurrender {
+					msg += ", 发起投降"
+				}
+				if packet.IsDraw {
+					msg += ", 发起和棋"
 				}
 				tools.Draw(win, packet.Table, &msg)
 				time.Sleep(time.Second * 3)

@@ -164,9 +164,8 @@ type PacketServerMoveResp struct {
 	PacketHeader
 	MoveRespType PacketTypeServerMoveRespType `json:"resp_type"`
 	// 下面的字段只有在状态OK的时候出现
-	TableOnOK   *chess.ChessTable `json:"table,omitempty"`
-	KingThreat  bool              `json:"king_threat"`
-	PawnUpgrade bool              `json:"pawn_upgrade"`
+	TableOnOK  *chess.ChessTable `json:"table,omitempty"`
+	KingThreat bool              `json:"king_threat"`
 }
 
 func (p *PacketServerMoveResp) MustMarshalToBytes() []byte {
