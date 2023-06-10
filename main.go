@@ -394,6 +394,12 @@ func main() {
 					return
 				}
 				waitingRemoteUpgradeOK = false
+				if packet.RemoteRequestDraw {
+					waitingAcceptDraw = true
+					msg := "对方请求议和, accept接受, refuse拒绝"
+					tools.Draw(win, packet.Table, &msg)
+					continue
+				}
 				msg := "现在是你的回合"
 				myTrun = true
 				tools.Draw(win, packet.Table, &msg)

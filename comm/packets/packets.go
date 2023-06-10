@@ -1,7 +1,7 @@
 package packets
 
 import (
-	"chess-backend/comm/chess"
+	"chess-frontend/comm/chess"
 	"encoding/json"
 )
 
