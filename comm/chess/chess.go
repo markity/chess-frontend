@@ -86,12 +86,67 @@ func (ct *ChessTable) Copy() *ChessTable {
 				Y:                    ct[i].Y,
 				GameSide:             ct[i].GameSide,
 				Moved:                ct[i].Moved,
-				PawnMovedTwoLastTime: ct[i].Moved,
+				PawnMovedTwoLastTime: ct[i].PawnMovedTwoLastTime,
 			}
 
 			table[i] = newPiece
 		}
 	}
+
+	return &table
+}
+
+// 测试upgrade
+func NewTestTable1() *ChessTable {
+	var table ChessTable
+
+	table.SetPosition(&ChessPiece{X: 'e', Y: 1, PieceType: ChessPieceTypeKing, GameSide: SideWhite, Moved: false})
+	table.SetPosition(&ChessPiece{X: 'e', Y: 8, PieceType: ChessPieceTypeKing, GameSide: SideBlack, Moved: false})
+	table.SetPosition(&ChessPiece{X: 'h', Y: 7, PieceType: ChessPieceTypePawn, GameSide: SideWhite, Moved: false, PawnMovedTwoLastTime: false})
+	table.SetPosition(&ChessPiece{X: 'a', Y: 7, PieceType: ChessPieceTypeQueen, GameSide: SideWhite, Moved: false, PawnMovedTwoLastTime: false})
+
+	return &table
+}
+
+// 测试upgrade
+func NewTestTable2() *ChessTable {
+	var table ChessTable
+
+	table.SetPosition(&ChessPiece{X: 'a', Y: 8, PieceType: ChessPieceTypeQueen, GameSide: SideWhite, Moved: true})
+
+	table.SetPosition(&ChessPiece{X: 'h', Y: 4, PieceType: ChessPieceTypePawn, GameSide: SideWhite, Moved: true})
+
+	table.SetPosition(&ChessPiece{X: 'a', Y: 3, PieceType: ChessPieceTypePawn, GameSide: SideWhite, Moved: true})
+	table.SetPosition(&ChessPiece{X: 'c', Y: 3, PieceType: ChessPieceTypePawn, GameSide: SideWhite, Moved: true})
+	table.SetPosition(&ChessPiece{X: 'e', Y: 3, PieceType: ChessPieceTypePawn, GameSide: SideWhite, Moved: true})
+	table.SetPosition(&ChessPiece{X: 'f', Y: 3, PieceType: ChessPieceTypeKnight, GameSide: SideWhite, Moved: true})
+	table.SetPosition(&ChessPiece{X: 'g', Y: 3, PieceType: ChessPieceTypePawn, GameSide: SideWhite, Moved: true})
+
+	table.SetPosition(&ChessPiece{X: 'd', Y: 2, PieceType: ChessPieceTypePawn, GameSide: SideWhite, Moved: false})
+	table.SetPosition(&ChessPiece{X: 'f', Y: 2, PieceType: ChessPieceTypePawn, GameSide: SideWhite, Moved: false})
+
+	table.SetPosition(&ChessPiece{X: 'c', Y: 1, PieceType: ChessPieceTypeBishop, GameSide: SideWhite, Moved: false})
+	table.SetPosition(&ChessPiece{X: 'd', Y: 1, PieceType: ChessPieceTypeQueen, GameSide: SideWhite, Moved: false})
+	table.SetPosition(&ChessPiece{X: 'e', Y: 1, PieceType: ChessPieceTypeKing, GameSide: SideWhite, Moved: false})
+	table.SetPosition(&ChessPiece{X: 'f', Y: 1, PieceType: ChessPieceTypeBishop, GameSide: SideWhite, Moved: false})
+	table.SetPosition(&ChessPiece{X: 'h', Y: 1, PieceType: ChessPieceTypeRook, GameSide: SideWhite, Moved: false})
+
+	table.SetPosition(&ChessPiece{X: 'b', Y: 8, PieceType: ChessPieceTypeKnight, GameSide: SideBlack, Moved: true})
+	table.SetPosition(&ChessPiece{X: 'd', Y: 8, PieceType: ChessPieceTypeKing, GameSide: SideBlack, Moved: true})
+
+	table.SetPosition(&ChessPiece{X: 'a', Y: 7, PieceType: ChessPieceTypePawn, GameSide: SideBlack, Moved: false})
+	table.SetPosition(&ChessPiece{X: 'h', Y: 7, PieceType: ChessPieceTypeRook, GameSide: SideBlack, Moved: true})
+
+	table.SetPosition(&ChessPiece{X: 'c', Y: 6, PieceType: ChessPieceTypePawn, GameSide: SideBlack, Moved: true})
+	table.SetPosition(&ChessPiece{X: 'e', Y: 6, PieceType: ChessPieceTypeBishop, GameSide: SideBlack, Moved: true})
+	table.SetPosition(&ChessPiece{X: 'g', Y: 6, PieceType: ChessPieceTypeQueen, GameSide: SideBlack, Moved: true})
+	table.SetPosition(&ChessPiece{X: 'h', Y: 6, PieceType: ChessPieceTypeKnight, GameSide: SideBlack, Moved: true})
+
+	table.SetPosition(&ChessPiece{X: 'd', Y: 5, PieceType: ChessPieceTypePawn, GameSide: SideBlack, Moved: true})
+	table.SetPosition(&ChessPiece{X: 'f', Y: 5, PieceType: ChessPieceTypePawn, GameSide: SideBlack, Moved: true})
+	table.SetPosition(&ChessPiece{X: 'h', Y: 5, PieceType: ChessPieceTypePawn, GameSide: SideBlack, Moved: true})
+
+	table.SetPosition(&ChessPiece{X: 'g', Y: 4, PieceType: ChessPieceTypePawn, GameSide: SideBlack, Moved: true})
 
 	return &table
 }
